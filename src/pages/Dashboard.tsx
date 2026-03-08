@@ -55,6 +55,31 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchBookings();
+
+    if (!user) return;
+
+    const channel = supabase
+      .channel('user-bookings-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setBookings(prev => [payload.new as Booking, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setBookings(prev =>
+              prev.map(b => b.id === payload.new.id ? payload.new as Booking : b)
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setBookings(prev => prev.filter(b => b.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   if (authLoading) {
