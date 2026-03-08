@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Scissors, Shield } from 'lucide-react';
+import { Menu, X, Scissors } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -67,13 +67,6 @@ const Navbar = () => {
             ))}
             {user ? (
               <div className="flex items-center gap-3">
-                {isAdmin && (
-                  <Link to="/admin">
-                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 cursor-pointer hover:bg-primary/10 transition-colors">
-                      <Shield className="h-3 w-3" /> Admin
-                    </Badge>
-                  </Link>
-                )}
                 <Link to={isAdmin ? "/admin" : "/dashboard"}>
                   <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">
                     {isAdmin ? 'Admin Panel' : 'Dashboard'}
@@ -124,11 +117,6 @@ const Navbar = () => {
               ))}
               {user ? (
                 <>
-                  {isAdmin && (
-                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 w-fit">
-                      <Shield className="h-3 w-3" /> Admin
-                    </Badge>
-                  )}
                   <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
                     <Button variant="outline" size="sm" className="w-full border-primary/30 text-primary">
                       {isAdmin ? 'Admin Panel' : 'Dashboard'}
