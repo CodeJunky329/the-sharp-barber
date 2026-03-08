@@ -118,8 +118,8 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             if (b.status !== old.status && b.status === 'cancelled') {
               addNotification({
                 type: 'cancelled',
-                title: 'Booking Cancelled',
-                message: `${b.full_name} cancelled their ${b.service.replace('_', ' ')} appointment`,
+                title: `❌ ${b.full_name} Cancelled`,
+                message: `${b.full_name} cancelled their ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}`,
                 bookingId: b.id,
               });
             }
