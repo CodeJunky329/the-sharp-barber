@@ -176,7 +176,10 @@ const BookingCard = ({ booking, isPast, onRefresh }: { booking: Booking; isPast?
               variant="outline"
               className={cn(
                 'text-xs',
-                isCancelled ? 'border-destructive/30 text-destructive' : 'border-primary/30 text-primary'
+                booking.status === 'cancelled' && 'border-destructive/30 text-destructive',
+                booking.status === 'pending' && 'border-amber-500/30 text-amber-500',
+                booking.status === 'confirmed' && 'border-emerald-500/30 text-emerald-500',
+                booking.status === 'completed' && 'border-primary/30 text-primary'
               )}
             >
               {booking.status}
