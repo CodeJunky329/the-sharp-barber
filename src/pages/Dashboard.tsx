@@ -8,8 +8,10 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ViewBookingDialog, EditBookingDialog, CancelBookingDialog } from '@/components/BookingManageDialogs';
-import { CalendarPlus, Clock, CalendarCheck, Loader2, User, Eye, Pencil, XCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { CalendarPlus, Clock, CalendarCheck, Loader2, User, Eye, Pencil, XCircle, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface Booking {
   id: string;
@@ -35,6 +37,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [clearAllLoading, setClearAllLoading] = useState(false);
 
   const fetchBookings = async () => {
     if (!user) return;
@@ -93,6 +97,30 @@ const Dashboard = () => {
   const upcomingBookings = bookings.filter((b) => (b.status === 'pending' || b.status === 'confirmed') && new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
   const pastBookings = bookings.filter((b) => b.status === 'cancelled' || new Date(`${b.booking_date}T${b.booking_time}`) < new Date());
 
+  const handleDeleteOne = async (id: string) => {
+    const { error } = await supabase.from('bookings').delete().eq('id', id);
+    if (error) {
+      toast.error('Failed to remove booking');
+    } else {
+      setBookings(prev => prev.filter(b => b.id !== id));
+      toast.success('Booking removed');
+    }
+  };
+
+  const handleClearAll = async () => {
+    setClearAllLoading(true);
+    const ids = pastBookings.map(b => b.id);
+    const { error } = await supabase.from('bookings').delete().in('id', ids);
+    setClearAllLoading(false);
+    if (error) {
+      toast.error('Failed to clear bookings');
+    } else {
+      setBookings(prev => prev.filter(b => !ids.includes(b.id)));
+      toast.success('Past bookings cleared');
+      setClearAllOpen(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -138,19 +166,49 @@ const Dashboard = () => {
 
           {/* Past */}
           <AnimatedSection delay={0.2}>
-            <h2 className="font-serif text-xl font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" /> Past & Cancelled
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-serif text-xl font-semibold flex items-center gap-2">
+                <Clock className="h-5 w-5 text-muted-foreground" /> Past & Cancelled
+              </h2>
+              {pastBookings.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive text-xs gap-1"
+                  onClick={() => setClearAllOpen(true)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Clear All
+                </Button>
+              )}
+            </div>
             {pastBookings.length === 0 ? (
               <div className="glass rounded-xl p-8 text-center text-muted-foreground text-sm">No past bookings yet.</div>
             ) : (
               <div className="space-y-3">
                 {pastBookings.map((b) => (
-                  <BookingCard key={b.id} booking={b} isPast onRefresh={fetchBookings} />
+                  <BookingCard key={b.id} booking={b} isPast onRefresh={fetchBookings} onDelete={handleDeleteOne} />
                 ))}
               </div>
             )}
           </AnimatedSection>
+
+          {/* Clear All Confirmation */}
+          <Dialog open={clearAllOpen} onOpenChange={setClearAllOpen}>
+            <DialogContent className="max-w-[92vw] sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-serif">Clear All Past Bookings</DialogTitle>
+                <DialogDescription>
+                  This will permanently remove {pastBookings.length} past/cancelled booking{pastBookings.length !== 1 ? 's' : ''} from your history. This cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2">
+                <Button variant="outline" onClick={() => setClearAllOpen(false)}>Cancel</Button>
+                <Button variant="destructive" onClick={handleClearAll} disabled={clearAllLoading} className="gap-2">
+                  {clearAllLoading && <Loader2 className="h-4 w-4 animate-spin" />} Clear All
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
       <Footer />
@@ -158,7 +216,7 @@ const Dashboard = () => {
   );
 };
 
-const BookingCard = ({ booking, isPast, onRefresh }: { booking: Booking; isPast?: boolean; onRefresh: () => void }) => {
+const BookingCard = ({ booking, isPast, onRefresh, onDelete }: { booking: Booking; isPast?: boolean; onRefresh: () => void; onDelete?: (id: string) => void }) => {
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -203,6 +261,11 @@ const BookingCard = ({ booking, isPast, onRefresh }: { booking: Booking; isPast?
                 <XCircle className="h-4 w-4" />
               </Button>
             </>
+          )}
+          {isPast && onDelete && (
+            <Button variant="ghost" size="icon" onClick={() => onDelete(booking.id)} title="Remove from history" className="text-destructive hover:text-destructive">
+              <Trash2 className="h-4 w-4" />
+            </Button>
           )}
         </div>
       </div>
