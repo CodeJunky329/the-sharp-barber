@@ -564,7 +564,7 @@ const Admin = () => {
                           <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Service</p>
                           <p className="text-xs sm:text-sm font-medium flex items-center gap-1">
                             <Scissors className="h-3 w-3 text-muted-foreground shrink-0" />
-                            <span className="truncate">{selectedBooking.service}{selectedBooking.service === 'classic_cut' ? ' — $45' : selectedBooking.service === 'royal_shave' ? ' — $35' : selectedBooking.service === 'beard_sculpt' ? ' — $30' : selectedBooking.service === 'luxe_package' ? ' — $95' : ''}</span>
+                            <span className="truncate">{serviceLabels[selectedBooking.service] || selectedBooking.service}</span>
                           </p>
                         </div>
                         <div className="space-y-0.5">
