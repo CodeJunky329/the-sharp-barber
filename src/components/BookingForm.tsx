@@ -206,12 +206,12 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
         <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any preferences or requests..." maxLength={500} className="bg-secondary/50 border-border/50 focus:border-primary min-h-[80px]" />
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button type="submit" disabled={loading} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 text-sm uppercase tracking-wider py-6">
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Booking...</> : 'Confirm Booking'}
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button type="submit" disabled={loading} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 text-xs uppercase tracking-wider py-4">
+          {loading ? <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> Booking...</> : 'Confirm Booking'}
         </Button>
-        <Button type="button" onClick={handleWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white text-sm uppercase tracking-wider py-6">
-          <MessageCircle className="mr-2 h-4 w-4" /> Send via WhatsApp
+        <Button type="button" onClick={handleWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white text-xs uppercase tracking-wider py-4">
+          <MessageCircle className="mr-2 h-3.5 w-3.5" /> Send via WhatsApp
         </Button>
       </div>
     </form>
