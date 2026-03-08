@@ -63,6 +63,7 @@ export const ViewBookingDialog = ({ booking, open, onOpenChange }: { booking: Bo
       </DialogHeader>
       <div className="space-y-4 py-2">
         <Row label="Service" value={serviceLabels[booking.service] || booking.service} />
+        <Row label="Price" value={servicePrices[booking.service] || '—'} />
         <Row label="Date" value={format(new Date(booking.booking_date), 'EEEE, MMM d, yyyy')} />
         <Row label="Time" value={booking.booking_time} />
         <Row label="Name" value={booking.full_name} />
