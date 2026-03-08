@@ -217,7 +217,7 @@ const Dashboard = () => {
   );
 };
 
-const BookingCard = ({ booking, isPast, onRefresh }: { booking: Booking; isPast?: boolean; onRefresh: () => void }) => {
+const BookingCard = ({ booking, isPast, onRefresh, onDelete }: { booking: Booking; isPast?: boolean; onRefresh: () => void; onDelete?: (id: string) => void }) => {
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -262,6 +262,11 @@ const BookingCard = ({ booking, isPast, onRefresh }: { booking: Booking; isPast?
                 <XCircle className="h-4 w-4" />
               </Button>
             </>
+          )}
+          {isPast && onDelete && (
+            <Button variant="ghost" size="icon" onClick={() => onDelete(booking.id)} title="Remove from history" className="text-destructive hover:text-destructive">
+              <Trash2 className="h-4 w-4" />
+            </Button>
           )}
         </div>
       </div>
