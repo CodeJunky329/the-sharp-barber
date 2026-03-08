@@ -28,6 +28,13 @@ import { format, isToday, isTomorrow, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotificationBell from '@/components/NotificationBell';
 
+const serviceLabels: Record<string, string> = {
+  classic_cut: 'Classic Cut — $45',
+  royal_shave: 'Royal Shave — $35',
+  beard_sculpt: 'Beard Sculpting — $30',
+  luxe_package: 'LUXE Package — $95',
+};
+
 interface Booking {
   id: string;
   full_name: string;
@@ -557,7 +564,7 @@ const Admin = () => {
                           <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Service</p>
                           <p className="text-xs sm:text-sm font-medium flex items-center gap-1">
                             <Scissors className="h-3 w-3 text-muted-foreground shrink-0" />
-                            <span className="truncate">{selectedBooking.service}</span>
+                            <span className="truncate">{serviceLabels[selectedBooking.service] || selectedBooking.service}</span>
                           </p>
                         </div>
                         <div className="space-y-0.5">
