@@ -51,6 +51,15 @@ const getIcon = (type: Notification['type']) => {
   }
 };
 
+const SERVICE_LABELS: Record<string, string> = {
+  classic_cut: 'Classic Cut',
+  royal_shave: 'Royal Shave',
+  beard_sculpt: 'Beard Sculpting',
+  luxe_package: 'LUXE Package',
+};
+
+const formatService = (s: string) => SERVICE_LABELS[s] || s.replace(/_/g, ' ');
+
 const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
@@ -94,8 +103,8 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             const b = payload.new as any;
             addNotification({
               type: 'new_booking',
-              title: 'New Booking',
-              message: `${b.full_name} booked ${b.service.replace('_', ' ')} for ${b.booking_date} at ${b.booking_time}`,
+              title: `📋 New Booking from ${b.full_name}`,
+              message: `${b.full_name} requested a ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time}. Awaiting your confirmation.`,
               bookingId: b.id,
             });
           }
@@ -109,8 +118,8 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             if (b.status !== old.status && b.status === 'cancelled') {
               addNotification({
                 type: 'cancelled',
-                title: 'Booking Cancelled',
-                message: `${b.full_name} cancelled their ${b.service.replace('_', ' ')} appointment`,
+                title: `❌ ${b.full_name} Cancelled`,
+                message: `${b.full_name} cancelled their ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}`,
                 bookingId: b.id,
               });
             }
@@ -135,17 +144,17 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
               confirmed: {
                 type: 'confirmed',
                 title: 'Booking Confirmed! ✅',
-                message: `Your ${b.service.replace('_', ' ')} on ${b.booking_date} at ${b.booking_time} has been confirmed`,
+                message: `Your ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time} has been confirmed. See you there!`,
               },
               cancelled: {
                 type: 'cancelled',
                 title: 'Booking Cancelled',
-                message: `Your ${b.service.replace('_', ' ')} on ${b.booking_date} has been cancelled`,
+                message: `Your ${formatService(b.service)} on ${b.booking_date} has been cancelled by the admin`,
               },
               completed: {
                 type: 'completed',
-                title: 'Booking Completed',
-                message: `Your ${b.service.replace('_', ' ')} session has been marked as completed`,
+                title: 'Session Complete 🎉',
+                message: `Your ${formatService(b.service)} session has been marked as completed. Thanks for visiting!`,
               },
             };
 
