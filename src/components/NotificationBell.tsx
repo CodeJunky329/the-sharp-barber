@@ -51,6 +51,15 @@ const getIcon = (type: Notification['type']) => {
   }
 };
 
+const SERVICE_LABELS: Record<string, string> = {
+  classic_cut: 'Classic Cut',
+  royal_shave: 'Royal Shave',
+  beard_sculpt: 'Beard Sculpting',
+  luxe_package: 'LUXE Package',
+};
+
+const formatService = (s: string) => SERVICE_LABELS[s] || s.replace(/_/g, ' ');
+
 const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
