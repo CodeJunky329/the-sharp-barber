@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -8,7 +9,10 @@ import { supabase } from '@/lib/supabase';
 import { CalendarCheck, Sparkles } from 'lucide-react';
 
 const Booking = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/auth" replace />;
   const [suggestedTime, setSuggestedTime] = useState<string | null>(null);
 
   useEffect(() => {
