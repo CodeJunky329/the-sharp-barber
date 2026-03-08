@@ -117,11 +117,6 @@ const Navbar = () => {
               ))}
               {user ? (
                 <>
-                  {isAdmin && (
-                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 w-fit">
-                      <Shield className="h-3 w-3" /> Admin
-                    </Badge>
-                  )}
                   <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
                     <Button variant="outline" size="sm" className="w-full border-primary/30 text-primary">
                       {isAdmin ? 'Admin Panel' : 'Dashboard'}
