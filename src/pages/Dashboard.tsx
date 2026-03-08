@@ -140,19 +140,49 @@ const Dashboard = () => {
 
           {/* Past */}
           <AnimatedSection delay={0.2}>
-            <h2 className="font-serif text-xl font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" /> Past & Cancelled
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-serif text-xl font-semibold flex items-center gap-2">
+                <Clock className="h-5 w-5 text-muted-foreground" /> Past & Cancelled
+              </h2>
+              {pastBookings.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive text-xs gap-1"
+                  onClick={() => setClearAllOpen(true)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Clear All
+                </Button>
+              )}
+            </div>
             {pastBookings.length === 0 ? (
               <div className="glass rounded-xl p-8 text-center text-muted-foreground text-sm">No past bookings yet.</div>
             ) : (
               <div className="space-y-3">
                 {pastBookings.map((b) => (
-                  <BookingCard key={b.id} booking={b} isPast onRefresh={fetchBookings} />
+                  <BookingCard key={b.id} booking={b} isPast onRefresh={fetchBookings} onDelete={handleDeleteOne} />
                 ))}
               </div>
             )}
           </AnimatedSection>
+
+          {/* Clear All Confirmation */}
+          <Dialog open={clearAllOpen} onOpenChange={setClearAllOpen}>
+            <DialogContent className="max-w-[92vw] sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-serif">Clear All Past Bookings</DialogTitle>
+                <DialogDescription>
+                  This will permanently remove {pastBookings.length} past/cancelled booking{pastBookings.length !== 1 ? 's' : ''} from your history. This cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2">
+                <Button variant="outline" onClick={() => setClearAllOpen(false)}>Cancel</Button>
+                <Button variant="destructive" onClick={handleClearAll} disabled={clearAllLoading} className="gap-2">
+                  {clearAllLoading && <Loader2 className="h-4 w-4 animate-spin" />} Clear All
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
       <Footer />
