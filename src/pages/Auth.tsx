@@ -53,12 +53,32 @@ const Auth = () => {
       }
     } else {
       const { error } = await signIn(email, password);
-      setLoading(false);
       if (error) {
+        setLoading(false);
         toast.error(error.message);
       } else {
-        toast.success('Welcome back!');
-        navigate('/dashboard');
+        // Check if user has admin role
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', user.id)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          setLoading(false);
+          if (roleData) {
+            toast.success('Welcome back, Admin!');
+            navigate('/admin');
+          } else {
+            toast.success('Welcome back!');
+            navigate('/dashboard');
+          }
+        } else {
+          setLoading(false);
+          navigate('/dashboard');
+        }
       }
     }
   };
