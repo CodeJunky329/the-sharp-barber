@@ -124,8 +124,15 @@ const Navbar = () => {
               ))}
               {user ? (
                 <>
-                  <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full border-primary/30 text-primary">Dashboard</Button>
+                  {isAdmin && (
+                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 w-fit">
+                      <Shield className="h-3 w-3" /> Admin
+                    </Badge>
+                  )}
+                  <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full border-primary/30 text-primary">
+                      {isAdmin ? 'Admin Panel' : 'Dashboard'}
+                    </Button>
                   </Link>
                   <Button variant="ghost" size="sm" onClick={() => { signOut(); setIsOpen(false); }} className="w-full text-muted-foreground">Sign Out</Button>
                 </>
