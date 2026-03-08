@@ -42,6 +42,38 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
   const [time, setTime] = useState(suggestedTime || '');
   const [service, setService] = useState('');
   const [notes, setNotes] = useState('');
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+
+  // Fetch booked (confirmed) slots when date changes
+  useEffect(() => {
+    if (!date) {
+      setBookedSlots([]);
+      return;
+    }
+    const fetchBookedSlots = async () => {
+      setLoadingSlots(true);
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('booking_time')
+        .eq('booking_date', dateStr)
+        .eq('status', 'confirmed');
+
+      if (!error && data) {
+        setBookedSlots(data.map((b: any) => b.booking_time));
+      }
+      setLoadingSlots(false);
+    };
+    fetchBookedSlots();
+  }, [date]);
+
+  // Reset time if selected slot becomes booked
+  useEffect(() => {
+    if (time && bookedSlots.includes(time)) {
+      setTime('');
+    }
+  }, [bookedSlots]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
