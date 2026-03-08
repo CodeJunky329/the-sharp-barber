@@ -20,7 +20,8 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Zap
+  Zap,
+  Eye
 } from 'lucide-react';
 import { format, isToday, isTomorrow, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
