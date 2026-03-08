@@ -1,14 +1,46 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
-import { Scissors, Award, Heart, Target } from 'lucide-react';
+import { Scissors, Award, Heart, Target, Instagram } from 'lucide-react';
+import { motion } from 'framer-motion';
 import aboutInterior from '@/assets/about-interior.jpg';
+import barber1 from '@/assets/barber-1.jpg';
+import barber2 from '@/assets/barber-2.jpg';
+import barber3 from '@/assets/barber-3.jpg';
+import barber4 from '@/assets/barber-4.jpg';
 
 const values = [
   { icon: Scissors, title: 'Craftsmanship', desc: 'Every cut is a work of art, executed with surgical precision and creative flair.' },
   { icon: Award, title: 'Excellence', desc: 'We hold ourselves to the highest standard — no shortcuts, no compromises.' },
   { icon: Heart, title: 'Hospitality', desc: 'From the moment you walk in, you\'re treated like royalty.' },
   { icon: Target, title: 'Consistency', desc: 'Your perfect cut, every single time. We remember exactly how you like it.' },
+];
+
+const team = [
+  {
+    name: 'Marcus Reed',
+    role: 'Founder & Master Barber',
+    bio: '15+ years of experience. Specializes in classic cuts and precision fades. Marcus founded LUXE with a vision to redefine men\'s grooming.',
+    image: barber1,
+  },
+  {
+    name: 'Carlos Rivera',
+    role: 'Senior Stylist',
+    bio: 'Known for his creative textures and modern styles. Carlos brings an artistic eye to every client who sits in his chair.',
+    image: barber2,
+  },
+  {
+    name: 'Tom Hadley',
+    role: 'Shave Specialist',
+    bio: 'A master of the straight razor. Tom\'s hot towel shaves are legendary — the smoothest finish in the city.',
+    image: barber3,
+  },
+  {
+    name: 'Amir Hassan',
+    role: 'Junior Barber',
+    bio: 'The newest addition to the LUXE family. Amir\'s fresh perspective and sharp skills make him a rising star.',
+    image: barber4,
+  },
 ];
 
 const About = () => (
@@ -53,6 +85,43 @@ const About = () => (
           </AnimatedSection>
         </div>
 
+        {/* Team Section */}
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-xs uppercase tracking-[0.3em] text-primary/70 font-sans">The Team</span>
+          <h2 className="text-2xl sm:text-4xl font-serif font-bold mt-3">Meet Our <span className="text-gradient-gold">Barbers</span></h2>
+          <p className="text-muted-foreground max-w-lg mx-auto mt-3 text-sm sm:text-base">The artists behind every perfect cut.</p>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+          {team.map((member, i) => (
+            <AnimatedSection key={member.name} delay={i * 0.1}>
+              <motion.div
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.3 }}
+                className="group glass rounded-xl overflow-hidden h-full"
+              >
+                <div className="aspect-[3/4] overflow-hidden relative">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p className="text-xs uppercase tracking-wider text-primary mb-1">{member.role}</p>
+                    <h3 className="font-serif text-lg font-bold text-foreground">{member.name}</h3>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <p className="text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
+                </div>
+              </motion.div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        {/* Values */}
         <AnimatedSection className="text-center mb-12">
           <h2 className="text-2xl sm:text-4xl font-serif font-bold">Our <span className="text-gradient-gold">Values</span></h2>
         </AnimatedSection>
