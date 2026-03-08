@@ -58,6 +58,32 @@ const Admin = () => {
   const [isLive, setIsLive] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [currentPage, setCurrentPage] = useState(1);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) {
+        setCheckingAdmin(false);
+        return;
+      }
+      
+      const { data, error } = await supabase.rpc('is_admin', { _user_id: user.id });
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(data === true);
+      }
+      setCheckingAdmin(false);
+    };
+
+    if (!loading) {
+      checkAdminStatus();
+    }
+  }, [user, loading]);
   const itemsPerPage = 10;
 
   // Fetch all bookings
