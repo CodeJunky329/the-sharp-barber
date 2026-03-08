@@ -116,7 +116,7 @@ export const EditBookingDialog = ({ booking, open, onOpenChange, onSaved }: { bo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-w-[92vw] max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-serif">Edit Booking</DialogTitle>
           <DialogDescription>Update your appointment details below.</DialogDescription>
