@@ -7,7 +7,8 @@ import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CalendarPlus, Clock, CalendarCheck, Loader2, User } from 'lucide-react';
+import { ViewBookingDialog, EditBookingDialog, CancelBookingDialog } from '@/components/BookingManageDialogs';
+import { CalendarPlus, Clock, CalendarCheck, Loader2, User, Eye, Pencil, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Booking {
@@ -35,6 +36,17 @@ const Dashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchBookings = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('booking_date', { ascending: false });
+    setBookings(data || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
@@ -42,16 +54,6 @@ const Dashboard = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (!user) return;
-    const fetchBookings = async () => {
-      const { data } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('booking_date', { ascending: false });
-      setBookings(data || []);
-      setLoading(false);
-    };
     fetchBookings();
   }, [user]);
 
@@ -63,8 +65,8 @@ const Dashboard = () => {
     );
   }
 
-  const upcomingBookings = bookings.filter((b) => new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
-  const pastBookings = bookings.filter((b) => new Date(`${b.booking_date}T${b.booking_time}`) < new Date());
+  const upcomingBookings = bookings.filter((b) => b.status !== 'cancelled' && new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
+  const pastBookings = bookings.filter((b) => b.status === 'cancelled' || new Date(`${b.booking_date}T${b.booking_time}`) < new Date());
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,7 +105,7 @@ const Dashboard = () => {
             ) : (
               <div className="space-y-3">
                 {upcomingBookings.map((b) => (
-                  <BookingCard key={b.id} booking={b} />
+                  <BookingCard key={b.id} booking={b} onRefresh={fetchBookings} />
                 ))}
               </div>
             )}
@@ -112,14 +114,14 @@ const Dashboard = () => {
           {/* Past */}
           <AnimatedSection delay={0.2}>
             <h2 className="font-serif text-xl font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" /> Past Appointments
+              <Clock className="h-5 w-5 text-muted-foreground" /> Past & Cancelled
             </h2>
             {pastBookings.length === 0 ? (
               <div className="glass rounded-xl p-8 text-center text-muted-foreground text-sm">No past bookings yet.</div>
             ) : (
               <div className="space-y-3">
                 {pastBookings.map((b) => (
-                  <BookingCard key={b.id} booking={b} isPast />
+                  <BookingCard key={b.id} booking={b} isPast onRefresh={fetchBookings} />
                 ))}
               </div>
             )}
@@ -131,19 +133,64 @@ const Dashboard = () => {
   );
 };
 
-const BookingCard = ({ booking, isPast }: { booking: Booking; isPast?: boolean }) => (
-  <div className={`glass rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${isPast ? 'opacity-60' : ''}`}>
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="font-serif font-semibold">{serviceLabels[booking.service] || booking.service}</span>
-        <Badge variant="outline" className="border-primary/30 text-primary text-xs">{booking.status}</Badge>
+const BookingCard = ({ booking, isPast, onRefresh }: { booking: Booking; isPast?: boolean; onRefresh: () => void }) => {
+  const [viewOpen, setViewOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+
+  const isCancelled = booking.status === 'cancelled';
+  const isUpcoming = !isPast && !isCancelled;
+
+  return (
+    <>
+      <div className={`glass rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${isPast ? 'opacity-60' : ''}`}>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-serif font-semibold">{serviceLabels[booking.service] || booking.service}</span>
+            <Badge
+              variant="outline"
+              className={cn(
+                'text-xs',
+                isCancelled ? 'border-destructive/30 text-destructive' : 'border-primary/30 text-primary'
+              )}
+            >
+              {booking.status}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {format(new Date(booking.booking_date), 'EEEE, MMM d, yyyy')} at {booking.booking_time}
+          </p>
+          {booking.notes && <p className="text-xs text-muted-foreground italic">"{booking.notes}"</p>}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="ghost" size="icon" onClick={() => setViewOpen(true)} title="View details">
+            <Eye className="h-4 w-4" />
+          </Button>
+          {isUpcoming && (
+            <>
+              <Button variant="ghost" size="icon" onClick={() => setEditOpen(true)} title="Edit booking">
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => setCancelOpen(true)} title="Cancel booking" className="text-destructive hover:text-destructive">
+                <XCircle className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground">
-        {format(new Date(booking.booking_date), 'EEEE, MMM d, yyyy')} at {booking.booking_time}
-      </p>
-      {booking.notes && <p className="text-xs text-muted-foreground italic">"{booking.notes}"</p>}
-    </div>
-  </div>
-);
+
+      <ViewBookingDialog booking={booking} open={viewOpen} onOpenChange={setViewOpen} />
+      {isUpcoming && (
+        <>
+          <EditBookingDialog booking={booking} open={editOpen} onOpenChange={setEditOpen} onSaved={onRefresh} />
+          <CancelBookingDialog booking={booking} open={cancelOpen} onOpenChange={setCancelOpen} onCancelled={onRefresh} />
+        </>
+      )}
+    </>
+  );
+};
+
+// Need cn import for conditional classes
+import { cn } from '@/lib/utils';
 
 export default Dashboard;
