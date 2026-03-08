@@ -386,9 +386,7 @@ const Admin = () => {
                   <thead>
                     <tr className="border-b border-border/50">
                       <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-muted-foreground font-medium">Client</th>
-                      <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-muted-foreground font-medium">Contact</th>
                       <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-muted-foreground font-medium">Date & Time</th>
-                      <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-muted-foreground font-medium">Service</th>
                       <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-muted-foreground font-medium">Status</th>
                       <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-muted-foreground font-medium">Actions</th>
                     </tr>
@@ -411,21 +409,7 @@ const Admin = () => {
                                   {booking.full_name.charAt(0).toUpperCase()}
                                 </span>
                               </div>
-                              <div>
-                                <p className="font-medium text-sm">{booking.full_name}</p>
-                                {booking.notes && (
-                                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                                    <FileText className="h-3 w-3" />
-                                    {booking.notes.substring(0, 30)}...
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Phone className="h-3.5 w-3.5" />
-                              {booking.phone}
+                              <p className="font-medium text-sm">{booking.full_name}</p>
                             </div>
                           </td>
                           <td className="py-4 px-4">
@@ -445,18 +429,21 @@ const Admin = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <Badge variant="outline" className="bg-primary/5">
-                              <Scissors className="h-3 w-3 mr-1" />
-                              {booking.service}
-                            </Badge>
-                          </td>
-                          <td className="py-4 px-4">
                             <Badge className={getStatusColor(booking.status)}>
                               {booking.status}
                             </Badge>
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="h-7 text-xs gap-1"
+                                onClick={() => setSelectedBooking(booking)}
+                              >
+                                <Eye className="h-3 w-3" />
+                                View
+                              </Button>
                               {booking.status === 'pending' && (
                                 <Button 
                                   size="sm" 
@@ -500,6 +487,112 @@ const Admin = () => {
                   </div>
                 )}
               </div>
+
+              {/* Booking Detail Dialog */}
+              <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif text-xl flex items-center gap-2">
+                      Booking Details
+                    </DialogTitle>
+                    <DialogDescription>Full information for this appointment.</DialogDescription>
+                  </DialogHeader>
+                  {selectedBooking && (
+                    <div className="space-y-4 pt-2">
+                      <div className="flex items-center gap-3 pb-4 border-b border-border/50">
+                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+                          <span className="text-lg font-semibold text-primary">
+                            {selectedBooking.full_name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-lg">{selectedBooking.full_name}</p>
+                          <Badge className={getStatusColor(selectedBooking.status)}>
+                            {selectedBooking.status}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Contact</p>
+                          <p className="text-sm font-medium flex items-center gap-1.5">
+                            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                            {selectedBooking.phone}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Service</p>
+                          <p className="text-sm font-medium flex items-center gap-1.5">
+                            <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
+                            {selectedBooking.service}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Date</p>
+                          <p className="text-sm font-medium flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                            {format(parseISO(selectedBooking.booking_date), 'MMMM dd, yyyy')}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Time</p>
+                          <p className="text-sm font-medium flex items-center gap-1.5">
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                            {selectedBooking.booking_time}
+                          </p>
+                        </div>
+                      </div>
+
+                      {selectedBooking.notes && (
+                        <div className="space-y-1 pt-2 border-t border-border/50">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Notes</p>
+                          <p className="text-sm text-muted-foreground flex items-start gap-1.5">
+                            <FileText className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                            {selectedBooking.notes}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="space-y-1 pt-2 border-t border-border/50">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground">Booked on</p>
+                        <p className="text-sm text-muted-foreground">
+                          {format(parseISO(selectedBooking.created_at), 'MMMM dd, yyyy \'at\' HH:mm')}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-4 border-t border-border/50">
+                        {selectedBooking.status === 'pending' && (
+                          <Button 
+                            size="sm" 
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                            onClick={() => { updateStatus(selectedBooking.id, 'confirmed'); setSelectedBooking(null); }}
+                          >
+                            Confirm
+                          </Button>
+                        )}
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => { updateStatus(selectedBooking.id, 'completed'); setSelectedBooking(null); }}
+                          disabled={selectedBooking.status === 'completed' || selectedBooking.status === 'cancelled'}
+                        >
+                          Mark Complete
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => { updateStatus(selectedBooking.id, 'cancelled'); setSelectedBooking(null); }}
+                          disabled={selectedBooking.status === 'cancelled'}
+                        >
+                          Cancel Booking
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
 
               {/* Pagination */}
               {totalPages > 1 && (
