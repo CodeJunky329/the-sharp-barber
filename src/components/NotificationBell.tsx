@@ -103,8 +103,8 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             const b = payload.new as any;
             addNotification({
               type: 'new_booking',
-              title: 'New Booking',
-              message: `${b.full_name} booked ${b.service.replace('_', ' ')} for ${b.booking_date} at ${b.booking_time}`,
+              title: `📋 New Booking from ${b.full_name}`,
+              message: `${b.full_name} requested a ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time}. Awaiting your confirmation.`,
               bookingId: b.id,
             });
           }
