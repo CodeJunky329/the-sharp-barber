@@ -33,6 +33,13 @@ const serviceLabels: Record<string, string> = {
   luxe_package: 'LUXE Package',
 };
 
+const servicePrices: Record<string, string> = {
+  classic_cut: 'R45',
+  royal_shave: 'R35',
+  beard_sculpt: 'R30',
+  luxe_package: 'R95',
+};
+
 const serviceOptions = [
   { value: 'classic_cut', label: 'Classic Cut — R45' },
   { value: 'royal_shave', label: 'Royal Shave — R35' },
@@ -56,6 +63,7 @@ export const ViewBookingDialog = ({ booking, open, onOpenChange }: { booking: Bo
       </DialogHeader>
       <div className="space-y-4 py-2">
         <Row label="Service" value={serviceLabels[booking.service] || booking.service} />
+        <Row label="Price" value={servicePrices[booking.service] || '—'} />
         <Row label="Date" value={format(new Date(booking.booking_date), 'EEEE, MMM d, yyyy')} />
         <Row label="Time" value={booking.booking_time} />
         <Row label="Name" value={booking.full_name} />
