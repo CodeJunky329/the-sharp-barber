@@ -67,13 +67,6 @@ const Navbar = () => {
             ))}
             {user ? (
               <div className="flex items-center gap-3">
-                {isAdmin && (
-                  <Link to="/admin">
-                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 cursor-pointer hover:bg-primary/10 transition-colors">
-                      <Shield className="h-3 w-3" /> Admin
-                    </Badge>
-                  </Link>
-                )}
                 <Link to={isAdmin ? "/admin" : "/dashboard"}>
                   <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">
                     {isAdmin ? 'Admin Panel' : 'Dashboard'}
