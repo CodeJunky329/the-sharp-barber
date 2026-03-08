@@ -132,9 +132,20 @@ const Admin = () => {
 
   // Update booking status
   const updateStatus = async (id: string, newStatus: string) => {
+    const updateData: any = { status: newStatus };
+    
+    // Mark admin cancellations so notifications can distinguish who cancelled
+    if (newStatus === 'cancelled') {
+      const booking = bookings.find(b => b.id === id);
+      const existingNotes = booking?.notes || '';
+      updateData.notes = existingNotes 
+        ? `${existingNotes}\n\n[Cancelled by admin]` 
+        : '[Cancelled by admin]';
+    }
+
     const { error } = await supabase
       .from('bookings')
-      .update({ status: newStatus })
+      .update(updateData)
       .eq('id', id);
 
     if (error) {
