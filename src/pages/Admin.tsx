@@ -167,12 +167,36 @@ const Admin = () => {
     calculateStats(bookings);
   }, [bookings]);
 
-  // Redirect if not logged in (basic auth check - you'd want role-based in production)
+  // Redirect if not admin
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
+    if (!loading && !checkingAdmin) {
+      if (!user) {
+        navigate('/auth');
+      } else if (isAdmin === false) {
+        navigate('/');
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, checkingAdmin, isAdmin, navigate]);
+
+  // Show access denied for non-admins
+  if (!loading && !checkingAdmin && isAdmin === false) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="glass max-w-md mx-4">
+          <CardHeader className="text-center">
+            <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+              <Scissors className="h-8 w-8 text-destructive" />
+            </div>
+            <CardTitle className="font-serif text-2xl">Access Denied</CardTitle>
+            <CardDescription>You don't have admin privileges to access this panel.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button onClick={() => navigate('/')}>Return to Home</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Filter bookings based on search
   const filteredBookings = bookings.filter(booking => 
