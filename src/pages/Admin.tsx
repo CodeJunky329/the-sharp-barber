@@ -522,82 +522,75 @@ const Admin = () => {
 
               {/* Booking Detail Dialog */}
               <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle className="font-serif text-xl flex items-center gap-2">
+                <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md p-4 sm:p-6 rounded-xl">
+                  <DialogHeader className="pb-2">
+                    <DialogTitle className="font-serif text-base sm:text-xl flex items-center gap-2">
                       Booking Details
                     </DialogTitle>
-                    <DialogDescription>Full information for this appointment.</DialogDescription>
+                    <DialogDescription className="text-xs sm:text-sm">Appointment information</DialogDescription>
                   </DialogHeader>
                   {selectedBooking && (
-                    <div className="space-y-4 pt-2">
-                      <div className="flex items-center gap-3 pb-4 border-b border-border/50">
-                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                          <span className="text-lg font-semibold text-primary">
+                    <div className="space-y-3 pt-1">
+                      <div className="flex items-center gap-2.5 pb-3 border-b border-border/50">
+                        <div className="h-9 w-9 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0">
+                          <span className="text-sm sm:text-lg font-semibold text-primary">
                             {selectedBooking.full_name.charAt(0).toUpperCase()}
                           </span>
                         </div>
-                        <div>
-                          <p className="font-semibold text-lg">{selectedBooking.full_name}</p>
-                          <Badge className={getStatusColor(selectedBooking.status)}>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-sm sm:text-lg truncate">{selectedBooking.full_name}</p>
+                          <Badge className={`text-[10px] sm:text-xs ${getStatusColor(selectedBooking.status)}`}>
                             {selectedBooking.status}
                           </Badge>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Contact</p>
-                          <p className="text-sm font-medium flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                            {selectedBooking.phone}
+                      <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+                        <div className="space-y-0.5">
+                          <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Contact</p>
+                          <p className="text-xs sm:text-sm font-medium flex items-center gap-1">
+                            <Phone className="h-3 w-3 text-muted-foreground shrink-0" />
+                            <span className="truncate">{selectedBooking.phone}</span>
                           </p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Service</p>
-                          <p className="text-sm font-medium flex items-center gap-1.5">
-                            <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
-                            {selectedBooking.service}
+                        <div className="space-y-0.5">
+                          <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Service</p>
+                          <p className="text-xs sm:text-sm font-medium flex items-center gap-1">
+                            <Scissors className="h-3 w-3 text-muted-foreground shrink-0" />
+                            <span className="truncate">{selectedBooking.service}</span>
                           </p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Date</p>
-                          <p className="text-sm font-medium flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                            {format(parseISO(selectedBooking.booking_date), 'MMMM dd, yyyy')}
+                        <div className="space-y-0.5">
+                          <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Date</p>
+                          <p className="text-xs sm:text-sm font-medium flex items-center gap-1">
+                            <Calendar className="h-3 w-3 text-muted-foreground shrink-0" />
+                            {format(parseISO(selectedBooking.booking_date), 'MMM dd, yyyy')}
                           </p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Time</p>
-                          <p className="text-sm font-medium flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                        <div className="space-y-0.5">
+                          <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Time</p>
+                          <p className="text-xs sm:text-sm font-medium flex items-center gap-1">
+                            <Clock className="h-3 w-3 text-muted-foreground shrink-0" />
                             {selectedBooking.booking_time}
                           </p>
                         </div>
                       </div>
 
                       {selectedBooking.notes && (
-                        <div className="space-y-1 pt-2 border-t border-border/50">
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">Notes</p>
-                          <p className="text-sm text-muted-foreground flex items-start gap-1.5">
-                            <FileText className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                        <div className="space-y-0.5 pt-2 border-t border-border/50">
+                          <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Notes</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground flex items-start gap-1">
+                            <FileText className="h-3 w-3 mt-0.5 shrink-0" />
                             {selectedBooking.notes}
                           </p>
                         </div>
                       )}
 
-                      <div className="space-y-1 pt-2 border-t border-border/50">
-                        <p className="text-xs uppercase tracking-wider text-muted-foreground">Booked on</p>
-                        <p className="text-sm text-muted-foreground">
-                          {format(parseISO(selectedBooking.created_at), 'MMMM dd, yyyy \'at\' HH:mm')}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-4 border-t border-border/50">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-3 border-t border-border/50">
                         {selectedBooking.status === 'pending' && (
                           <Button 
                             size="sm" 
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                            className="h-7 sm:h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
                             onClick={() => { updateStatus(selectedBooking.id, 'confirmed'); setSelectedBooking(null); }}
                           >
                             Confirm
@@ -606,19 +599,20 @@ const Admin = () => {
                         <Button 
                           size="sm" 
                           variant="outline"
+                          className="h-7 sm:h-8 text-xs"
                           onClick={() => { updateStatus(selectedBooking.id, 'completed'); setSelectedBooking(null); }}
                           disabled={selectedBooking.status === 'completed' || selectedBooking.status === 'cancelled'}
                         >
-                          Mark Complete
+                          Complete
                         </Button>
                         <Button 
                           size="sm" 
                           variant="ghost"
-                          className="text-destructive hover:text-destructive"
+                          className="h-7 sm:h-8 text-xs text-destructive hover:text-destructive"
                           onClick={() => { updateStatus(selectedBooking.id, 'cancelled'); setSelectedBooking(null); }}
                           disabled={selectedBooking.status === 'cancelled'}
                         >
-                          Cancel Booking
+                          Cancel
                         </Button>
                       </div>
                     </div>
