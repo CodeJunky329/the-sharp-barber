@@ -450,12 +450,22 @@ const Admin = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
+                              {booking.status === 'pending' && (
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost"
+                                  className="h-7 text-xs text-emerald-400 hover:text-emerald-400"
+                                  onClick={() => updateStatus(booking.id, 'confirmed')}
+                                >
+                                  Confirm
+                                </Button>
+                              )}
                               <Button 
                                 size="sm" 
                                 variant="ghost"
                                 className="h-7 text-xs"
                                 onClick={() => updateStatus(booking.id, 'completed')}
-                                disabled={booking.status === 'completed'}
+                                disabled={booking.status === 'completed' || booking.status === 'cancelled'}
                               >
                                 Complete
                               </Button>
