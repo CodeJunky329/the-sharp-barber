@@ -76,7 +76,8 @@ const Navbar = () => {
               </Link>
             ))}
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <NotificationBell isAdmin={isAdmin} />
                 <Link to={isAdmin ? "/admin" : "/dashboard"}>
                   <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">
                     {isAdmin ? 'Admin Panel' : 'Dashboard'}
