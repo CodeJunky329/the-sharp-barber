@@ -373,7 +373,47 @@ const Admin = () => {
             </CardHeader>
             
             <CardContent>
-              <div className="overflow-x-auto">
+              {/* Mobile: compact card list */}
+              <div className="sm:hidden space-y-2">
+                <AnimatePresence mode="popLayout">
+                  {paginatedBookings.map((booking) => (
+                    <motion.div
+                      key={booking.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      layout
+                      className="flex items-center justify-between p-3 rounded-lg border border-border/30 bg-muted/20"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0">
+                          <span className="text-sm font-semibold text-primary">
+                            {booking.full_name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{booking.full_name}</p>
+                          <Badge className={`${getStatusColor(booking.status)} text-[10px] px-1.5 py-0`}>
+                            {booking.status}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 text-xs gap-1 shrink-0"
+                        onClick={() => setSelectedBooking(booking)}
+                      >
+                        <Eye className="h-3 w-3" />
+                        View
+                      </Button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {/* Desktop: full table */}
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border/50">
@@ -471,14 +511,14 @@ const Admin = () => {
                     </AnimatePresence>
                   </tbody>
                 </table>
-
-                {filteredBookings.length === 0 && (
-                  <div className="text-center py-12">
-                    <Calendar className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                    <p className="text-muted-foreground">No bookings found</p>
-                  </div>
-                )}
               </div>
+
+              {filteredBookings.length === 0 && (
+                <div className="text-center py-12">
+                  <Calendar className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No bookings found</p>
+                </div>
+              )}
 
               {/* Booking Detail Dialog */}
               <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
