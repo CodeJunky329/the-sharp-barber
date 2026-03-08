@@ -51,6 +51,7 @@ const Admin = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [stats, setStats] = useState<Stats>({
     totalBookings: 0,
     todayBookings: 0,
