@@ -168,9 +168,14 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
               <SelectValue placeholder="Select time" />
             </SelectTrigger>
             <SelectContent>
-              {timeSlots.map((t) => (
-                <SelectItem key={t} value={t}>{t}</SelectItem>
-              ))}
+              {timeSlots.map((t) => {
+                const isBooked = bookedSlots.includes(t);
+                return (
+                  <SelectItem key={t} value={t} disabled={isBooked} className={cn(isBooked && 'opacity-40 line-through')}>
+                    {t}{isBooked ? ' — Booked' : ''}
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
         </div>
