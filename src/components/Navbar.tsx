@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Scissors } from 'lucide-react';
+import { Menu, X, Scissors, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -14,8 +16,20 @@ const navItems = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
 
   return (
     <motion.nav
@@ -53,9 +67,16 @@ const Navbar = () => {
             ))}
             {user ? (
               <div className="flex items-center gap-3">
-                <Link to="/dashboard">
+                {isAdmin && (
+                  <Link to="/admin">
+                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 cursor-pointer hover:bg-primary/10 transition-colors">
+                      <Shield className="h-3 w-3" /> Admin
+                    </Badge>
+                  </Link>
+                )}
+                <Link to={isAdmin ? "/admin" : "/dashboard"}>
                   <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">
-                    Dashboard
+                    {isAdmin ? 'Admin Panel' : 'Dashboard'}
                   </Button>
                 </Link>
                 <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">
@@ -103,8 +124,15 @@ const Navbar = () => {
               ))}
               {user ? (
                 <>
-                  <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full border-primary/30 text-primary">Dashboard</Button>
+                  {isAdmin && (
+                    <Badge variant="outline" className="border-primary/50 text-primary gap-1 w-fit">
+                      <Shield className="h-3 w-3" /> Admin
+                    </Badge>
+                  )}
+                  <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full border-primary/30 text-primary">
+                      {isAdmin ? 'Admin Panel' : 'Dashboard'}
+                    </Button>
                   </Link>
                   <Button variant="ghost" size="sm" onClick={() => { signOut(); setIsOpen(false); }} className="w-full text-muted-foreground">Sign Out</Button>
                 </>
