@@ -258,7 +258,7 @@ const Admin = () => {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {/* Live indicator */}
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                 <span className="relative flex h-2 w-2">
@@ -267,6 +267,8 @@ const Admin = () => {
                 </span>
                 <span className="text-xs text-emerald-400 font-medium">Live</span>
               </div>
+              
+              <NotificationBell isAdmin />
               
               <Button variant="outline" size="sm" onClick={() => navigate('/')}>
                 Back to Site
