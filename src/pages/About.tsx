@@ -92,7 +92,7 @@ const About = () => (
           <p className="text-muted-foreground max-w-lg mx-auto mt-3 text-sm sm:text-base">The artists behind every perfect cut.</p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-20">
           {team.map((member, i) => (
             <AnimatedSection key={member.name} delay={i * 0.1}>
               <motion.div

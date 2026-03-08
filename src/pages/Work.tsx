@@ -34,7 +34,7 @@ const Work = () => (
           <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base">A showcase of precision, creativity and craftsmanship.</p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
           {galleryItems.map((item, i) => (
             <AnimatedSection key={item.title} delay={i * 0.08}>
               <motion.div
