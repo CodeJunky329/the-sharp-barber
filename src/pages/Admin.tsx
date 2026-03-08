@@ -113,7 +113,7 @@ const Admin = () => {
     setStats({
       totalBookings: data.length,
       todayBookings: data.filter(b => b.booking_date === today).length,
-      upcomingBookings: data.filter(b => b.booking_date >= today && b.status === 'confirmed').length,
+      upcomingBookings: data.filter(b => b.booking_date >= today && (b.status === 'confirmed' || b.status === 'pending')).length,
       completedBookings: data.filter(b => b.status === 'completed').length
     });
   };
@@ -225,10 +225,11 @@ const Admin = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case 'pending': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
       case 'confirmed': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
       case 'completed': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'cancelled': return 'bg-red-500/20 text-red-400 border-red-500/30';
-      default: return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -450,12 +451,22 @@ const Admin = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
+                              {booking.status === 'pending' && (
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost"
+                                  className="h-7 text-xs text-emerald-400 hover:text-emerald-400"
+                                  onClick={() => updateStatus(booking.id, 'confirmed')}
+                                >
+                                  Confirm
+                                </Button>
+                              )}
                               <Button 
                                 size="sm" 
                                 variant="ghost"
                                 className="h-7 text-xs"
                                 onClick={() => updateStatus(booking.id, 'completed')}
-                                disabled={booking.status === 'completed'}
+                                disabled={booking.status === 'completed' || booking.status === 'cancelled'}
                               >
                                 Complete
                               </Button>
