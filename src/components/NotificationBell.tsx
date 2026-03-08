@@ -144,17 +144,17 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
               confirmed: {
                 type: 'confirmed',
                 title: 'Booking Confirmed! ✅',
-                message: `Your ${b.service.replace('_', ' ')} on ${b.booking_date} at ${b.booking_time} has been confirmed`,
+                message: `Your ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time} has been confirmed. See you there!`,
               },
               cancelled: {
                 type: 'cancelled',
                 title: 'Booking Cancelled',
-                message: `Your ${b.service.replace('_', ' ')} on ${b.booking_date} has been cancelled`,
+                message: `Your ${formatService(b.service)} on ${b.booking_date} has been cancelled by the admin`,
               },
               completed: {
                 type: 'completed',
-                title: 'Booking Completed',
-                message: `Your ${b.service.replace('_', ' ')} session has been marked as completed`,
+                title: 'Session Complete 🎉',
+                message: `Your ${formatService(b.service)} session has been marked as completed. Thanks for visiting!`,
               },
             };
 
