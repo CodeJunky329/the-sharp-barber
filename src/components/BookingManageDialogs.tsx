@@ -229,7 +229,7 @@ export const CancelBookingDialog = ({ booking, open, onOpenChange, onCancelled }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[92vw] max-h-[85vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" /> Cancel Booking
