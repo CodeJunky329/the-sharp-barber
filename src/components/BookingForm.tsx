@@ -9,10 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarIcon, Clock, Loader2 } from 'lucide-react';
+import { CalendarIcon, Clock, Loader2, MessageCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
+const BARBER_WHATSAPP = '27747862736';
 
 const timeSlots = [
   '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
@@ -117,6 +119,24 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
     }
   };
 
+  const handleWhatsApp = () => {
+    if (!fullName.trim() || !phone.trim() || !date || !time || !service) {
+      toast.error('Please fill in all required fields before sending via WhatsApp');
+      return;
+    }
+    const selectedService = serviceOptions.find(s => s.value === service)?.label || service;
+    const message = `Hi, I'd like to book an appointment:\n\n` +
+      `*Name:* ${fullName.trim()}\n` +
+      `*Phone:* ${phone.trim()}\n` +
+      `*Service:* ${selectedService}\n` +
+      `*Date:* ${format(date, 'PPP')}\n` +
+      `*Time:* ${time}\n` +
+      (notes.trim() ? `*Notes:* ${notes.trim()}\n` : '');
+
+    const url = `https://wa.me/${BARBER_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -186,9 +206,14 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
         <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any preferences or requests..." maxLength={500} className="bg-secondary/50 border-border/50 focus:border-primary min-h-[80px]" />
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-sm uppercase tracking-wider py-6">
-        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Booking...</> : 'Confirm Booking'}
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button type="submit" disabled={loading} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 text-sm uppercase tracking-wider py-6">
+          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Booking...</> : 'Confirm Booking'}
+        </Button>
+        <Button type="button" onClick={handleWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white text-sm uppercase tracking-wider py-6">
+          <MessageCircle className="mr-2 h-4 w-4" /> Send via WhatsApp
+        </Button>
+      </div>
     </form>
   );
 };
