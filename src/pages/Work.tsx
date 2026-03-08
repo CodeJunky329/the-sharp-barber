@@ -2,17 +2,25 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import { motion } from 'framer-motion';
-import { Scissors } from 'lucide-react';
+
+import gallery1 from '@/assets/gallery-1.jpg';
+import gallery2 from '@/assets/gallery-2.jpg';
+import gallery3 from '@/assets/gallery-3.jpg';
+import gallery4 from '@/assets/gallery-4.jpg';
+import gallery5 from '@/assets/gallery-5.jpg';
+import gallery6 from '@/assets/gallery-6.jpg';
+import gallery7 from '@/assets/gallery-7.jpg';
+import gallery8 from '@/assets/gallery-8.jpg';
 
 const galleryItems = [
-  { title: 'Classic Fade', category: 'Haircut' },
-  { title: 'Beard Sculpt', category: 'Beard' },
-  { title: 'Skin Fade', category: 'Haircut' },
-  { title: 'Hot Towel Shave', category: 'Shave' },
-  { title: 'Textured Crop', category: 'Haircut' },
-  { title: 'Full Grooming', category: 'Package' },
-  { title: 'Line Up', category: 'Haircut' },
-  { title: 'Beard Trim', category: 'Beard' },
+  { title: 'Classic Fade', category: 'Haircut', image: gallery1 },
+  { title: 'Beard Sculpt', category: 'Beard', image: gallery2 },
+  { title: 'Skin Fade', category: 'Haircut', image: gallery3 },
+  { title: 'Hot Towel Shave', category: 'Shave', image: gallery4 },
+  { title: 'Textured Crop', category: 'Haircut', image: gallery5 },
+  { title: 'Full Grooming', category: 'Package', image: gallery6 },
+  { title: 'Line Up', category: 'Haircut', image: gallery7 },
+  { title: 'Beard Trim', category: 'Beard', image: gallery8 },
 ];
 
 const Work = () => (
@@ -34,8 +42,13 @@ const Work = () => (
                 transition={{ duration: 0.3 }}
                 className="group glass rounded-xl overflow-hidden"
               >
-                <div className="aspect-[3/4] bg-secondary/20 flex items-center justify-center relative">
-                  <Scissors className="h-12 w-12 text-primary/15 group-hover:text-primary/30 transition-colors duration-500" />
+                <div className="aspect-[3/4] relative overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                     <span className="text-xs uppercase tracking-wider text-primary">{item.category}</span>

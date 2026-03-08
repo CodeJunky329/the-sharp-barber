@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import { Scissors, Award, Heart, Target } from 'lucide-react';
+import aboutInterior from '@/assets/about-interior.jpg';
 
 const values = [
   { icon: Scissors, title: 'Craftsmanship', desc: 'Every cut is a work of art, executed with surgical precision and creative flair.' },
@@ -41,11 +42,13 @@ const About = () => (
           </AnimatedSection>
 
           <AnimatedSection delay={0.2}>
-            <div className="glass rounded-2xl overflow-hidden aspect-[4/3] flex items-center justify-center bg-secondary/20">
-              <div className="text-center p-8">
-                <Scissors className="h-16 w-16 text-primary/30 mx-auto mb-4" />
-                <p className="text-muted-foreground text-sm italic">Premium barbershop interior</p>
-              </div>
+            <div className="glass rounded-2xl overflow-hidden aspect-[4/3]">
+              <img
+                src={aboutInterior}
+                alt="LUXE barbershop interior"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
           </AnimatedSection>
         </div>

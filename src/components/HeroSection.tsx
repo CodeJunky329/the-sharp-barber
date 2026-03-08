@@ -2,9 +2,16 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import heroBg from '@/assets/hero-bg.jpg';
 
 const HeroSection = () => (
   <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    {/* Background image */}
+    <div className="absolute inset-0">
+      <img src={heroBg} alt="Barbershop interior" className="w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-background/75" />
+    </div>
+
     {/* Background layers */}
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(42_78%_52%/0.06)_0%,transparent_70%)]" />
     <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,hsl(0_0%_4%/0.8)_100%)]" />
