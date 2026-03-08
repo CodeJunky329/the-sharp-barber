@@ -21,7 +21,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
-  Eye
+  Eye,
+  Shield
 } from 'lucide-react';
 import { format, isToday, isTomorrow, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
