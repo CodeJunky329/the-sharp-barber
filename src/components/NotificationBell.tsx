@@ -21,11 +21,11 @@ interface Notification {
   bookingId?: string;
 }
 
-const STORAGE_KEY = 'luxe_notifications';
+const getStorageKey = (isAdmin: boolean) => isAdmin ? 'luxe_notifications_admin' : 'luxe_notifications_user';
 
-const loadNotifications = (): Notification[] => {
+const loadNotifications = (isAdmin: boolean): Notification[] => {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(getStorageKey(isAdmin));
     if (!stored) return [];
     return JSON.parse(stored).map((n: any) => ({
       ...n,
@@ -36,8 +36,8 @@ const loadNotifications = (): Notification[] => {
   }
 };
 
-const saveNotifications = (notifications: Notification[]) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications.slice(0, 50)));
+const saveNotifications = (notifications: Notification[], isAdmin: boolean) => {
+  localStorage.setItem(getStorageKey(isAdmin), JSON.stringify(notifications.slice(0, 50)));
 };
 
 const getIcon = (type: Notification['type']) => {
@@ -62,7 +62,7 @@ const formatService = (s: string) => SERVICE_LABELS[s] || s.replace(/_/g, ' ');
 
 const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(isAdmin));
   const [open, setOpen] = useState(false);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -76,24 +76,22 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     };
     setNotifications((prev) => {
       const updated = [newNotif, ...prev].slice(0, 50);
-      saveNotifications(updated);
+      saveNotifications(updated, isAdmin);
       return updated;
     });
 
-    // Show sonner toast
     toast(notif.title, {
       description: notif.message,
       icon: getIcon(notif.type),
       duration: 5000,
     });
-  }, []);
+  }, [isAdmin]);
 
-  // Subscribe to realtime changes on bookings
   useEffect(() => {
     if (!user) return;
 
     if (isAdmin) {
-      // Admin: listen for all booking changes
+      // Admin: listen for new bookings
       const channel = supabase
         .channel('admin-notifications')
         .on(
@@ -116,12 +114,18 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             const b = payload.new as any;
             const old = payload.old as any;
             if (b.status !== old.status && b.status === 'cancelled') {
-              addNotification({
-                type: 'cancelled',
-                title: `❌ ${b.full_name} Cancelled`,
-                message: `${b.full_name} cancelled their ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}`,
-                bookingId: b.id,
-              });
+              // Check if this was cancelled by admin or user
+              const cancelledByAdmin = (b.notes || '').includes('[Cancelled by admin]');
+              if (!cancelledByAdmin) {
+                // User cancelled their own booking — notify admin
+                addNotification({
+                  type: 'cancelled',
+                  title: `❌ ${b.full_name} Cancelled`,
+                  message: `${b.full_name} cancelled their ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}.`,
+                  bookingId: b.id,
+                });
+              }
+              // If admin cancelled, don't show notification to admin (they did it)
             }
           }
         )
@@ -140,16 +144,31 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             const old = payload.old as any;
             if (b.status === old.status) return;
 
+            if (b.status === 'cancelled') {
+              const cancelledByAdmin = (b.notes || '').includes('[Cancelled by admin]');
+              if (cancelledByAdmin) {
+                addNotification({
+                  type: 'cancelled',
+                  title: 'Booking Cancelled by Admin',
+                  message: `Admin has cancelled your ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}.`,
+                  bookingId: b.id,
+                });
+              } else {
+                addNotification({
+                  type: 'cancelled',
+                  title: 'Booking Cancelled',
+                  message: `You have cancelled your ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}.`,
+                  bookingId: b.id,
+                });
+              }
+              return;
+            }
+
             const statusMessages: Record<string, { title: string; message: string; type: Notification['type'] }> = {
               confirmed: {
                 type: 'confirmed',
                 title: 'Booking Confirmed! ✅',
                 message: `Your ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time} has been confirmed. See you there!`,
-              },
-              cancelled: {
-                type: 'cancelled',
-                title: 'Booking Cancelled',
-                message: `Your ${formatService(b.service)} on ${b.booking_date} has been cancelled by the admin`,
               },
               completed: {
                 type: 'completed',
@@ -173,20 +192,20 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const markAllRead = () => {
     setNotifications((prev) => {
       const updated = prev.map((n) => ({ ...n, read: true }));
-      saveNotifications(updated);
+      saveNotifications(updated, isAdmin);
       return updated;
     });
   };
 
   const clearAll = () => {
     setNotifications([]);
-    saveNotifications([]);
+    saveNotifications([], isAdmin);
   };
 
   const markAsRead = (id: string) => {
     setNotifications((prev) => {
       const updated = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
-      saveNotifications(updated);
+      saveNotifications(updated, isAdmin);
       return updated;
     });
   };
