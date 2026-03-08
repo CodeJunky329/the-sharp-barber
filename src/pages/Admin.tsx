@@ -249,27 +249,27 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center shrink-0">
-                <Scissors className="h-4 w-4 sm:h-5 sm:w-5 text-background" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
+                <Scissors className="h-5 w-5 text-background" />
               </div>
-              <div className="min-w-0">
-                <h1 className="font-serif text-sm sm:text-xl font-bold truncate">Admin Panel</h1>
-                <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">LUXE Barbershop</p>
+              <div>
+                <h1 className="font-serif text-xl sm:text-xl font-bold">Admin Panel</h1>
+                <p className="text-xs text-muted-foreground">LUXE Barbershop</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3">
               <NotificationBell isAdmin />
               
-              <Button variant="outline" size="sm" className="text-xs px-2 sm:px-3" onClick={() => navigate('/')}>
+              <Button variant="outline" size="sm" onClick={() => navigate('/')}>
                 <span className="hidden sm:inline">Back to Site</span>
                 <span className="sm:hidden">Home</span>
               </Button>
 
-              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 text-xs px-2 sm:px-3" onClick={async () => { await supabase.auth.signOut(); navigate('/'); }}>
+              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={async () => { await supabase.auth.signOut(); navigate('/'); }}>
                 Sign Out
               </Button>
             </div>
