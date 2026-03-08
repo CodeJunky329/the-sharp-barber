@@ -10,9 +10,6 @@ import { CalendarCheck, Sparkles } from 'lucide-react';
 
 const Booking = () => {
   const { user, loading } = useAuth();
-
-  if (loading) return null;
-  if (!user) return <Navigate to="/auth" replace />;
   const [suggestedTime, setSuggestedTime] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,6 +26,9 @@ const Booking = () => {
     };
     fetchLastBooking();
   }, [user]);
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/auth" replace />;
 
   return (
     <div className="min-h-screen bg-background">
