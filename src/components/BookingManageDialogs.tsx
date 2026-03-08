@@ -183,7 +183,7 @@ export const EditBookingDialog = ({ booking, open, onOpenChange, onSaved }: { bo
             <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} className="bg-secondary/50 border-border/50 min-h-[80px]" />
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleSave} disabled={loading} className="gap-2">
             {loading && <Loader2 className="h-4 w-4 animate-spin" />} Save Changes
