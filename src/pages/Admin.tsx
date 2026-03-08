@@ -252,7 +252,7 @@ const Admin = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary px-3 py-1.5 text-sm sm:text-base font-serif font-bold tracking-wide">
-              <Scissors className="h-4 w-4 mr-1.5" />
+              <Shield className="h-4 w-4 mr-1.5" />
               Admin Panel
             </Badge>
             
