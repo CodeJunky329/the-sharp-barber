@@ -92,8 +92,35 @@ const Dashboard = () => {
     );
   }
 
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [clearAllLoading, setClearAllLoading] = useState(false);
+
   const upcomingBookings = bookings.filter((b) => (b.status === 'pending' || b.status === 'confirmed') && new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
   const pastBookings = bookings.filter((b) => b.status === 'cancelled' || new Date(`${b.booking_date}T${b.booking_time}`) < new Date());
+
+  const handleDeleteOne = async (id: string) => {
+    const { error } = await supabase.from('bookings').delete().eq('id', id);
+    if (error) {
+      toast.error('Failed to remove booking');
+    } else {
+      setBookings(prev => prev.filter(b => b.id !== id));
+      toast.success('Booking removed');
+    }
+  };
+
+  const handleClearAll = async () => {
+    setClearAllLoading(true);
+    const ids = pastBookings.map(b => b.id);
+    const { error } = await supabase.from('bookings').delete().in('id', ids);
+    setClearAllLoading(false);
+    if (error) {
+      toast.error('Failed to clear bookings');
+    } else {
+      setBookings(prev => prev.filter(b => !ids.includes(b.id)));
+      toast.success('Past bookings cleared');
+      setClearAllOpen(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
