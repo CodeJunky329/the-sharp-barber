@@ -37,6 +37,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [clearAllLoading, setClearAllLoading] = useState(false);
 
   const fetchBookings = async () => {
     if (!user) return;
@@ -91,9 +93,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const [clearAllOpen, setClearAllOpen] = useState(false);
-  const [clearAllLoading, setClearAllLoading] = useState(false);
 
   const upcomingBookings = bookings.filter((b) => (b.status === 'pending' || b.status === 'confirmed') && new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
   const pastBookings = bookings.filter((b) => b.status === 'cancelled' || new Date(`${b.booking_date}T${b.booking_time}`) < new Date());
