@@ -8,8 +8,10 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ViewBookingDialog, EditBookingDialog, CancelBookingDialog } from '@/components/BookingManageDialogs';
-import { CalendarPlus, Clock, CalendarCheck, Loader2, User, Eye, Pencil, XCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { CalendarPlus, Clock, CalendarCheck, Loader2, User, Eye, Pencil, XCircle, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface Booking {
   id: string;
