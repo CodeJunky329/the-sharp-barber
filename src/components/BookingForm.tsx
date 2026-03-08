@@ -71,7 +71,7 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
       booking_time: time,
       service,
       notes: notes.trim() || null,
-      status: 'confirmed',
+      status: 'pending',
     });
 
     setLoading(false);

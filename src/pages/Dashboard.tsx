@@ -90,7 +90,7 @@ const Dashboard = () => {
     );
   }
 
-  const upcomingBookings = bookings.filter((b) => b.status !== 'cancelled' && new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
+  const upcomingBookings = bookings.filter((b) => (b.status === 'pending' || b.status === 'confirmed') && new Date(`${b.booking_date}T${b.booking_time}`) >= new Date());
   const pastBookings = bookings.filter((b) => b.status === 'cancelled' || new Date(`${b.booking_date}T${b.booking_time}`) < new Date());
 
   return (
