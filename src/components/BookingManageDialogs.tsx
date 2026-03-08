@@ -33,6 +33,13 @@ const serviceLabels: Record<string, string> = {
   luxe_package: 'LUXE Package',
 };
 
+const servicePrices: Record<string, string> = {
+  classic_cut: 'R45',
+  royal_shave: 'R35',
+  beard_sculpt: 'R30',
+  luxe_package: 'R95',
+};
+
 const serviceOptions = [
   { value: 'classic_cut', label: 'Classic Cut — R45' },
   { value: 'royal_shave', label: 'Royal Shave — R35' },
