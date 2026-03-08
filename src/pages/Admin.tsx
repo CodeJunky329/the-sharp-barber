@@ -256,8 +256,8 @@ const Admin = () => {
                 <Scissors className="h-5 w-5 text-background" />
               </div>
               <div>
-                <h1 className="font-serif text-xl sm:text-xl font-bold">Admin Panel</h1>
-                <p className="text-xs text-muted-foreground">LUXE Barbershop</p>
+                <h1 className="font-serif text-base sm:text-xl font-bold">Admin Panel</h1>
+                <p className="text-xs text-muted-foreground hidden sm:block">LUXE Barbershop</p>
               </div>
             </div>
             
