@@ -113,9 +113,6 @@ const About = () => (
                     <h3 className="font-serif text-lg font-bold text-foreground">{member.name}</h3>
                   </div>
                 </div>
-                <div className="p-5">
-                  <p className="text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
-                </div>
               </motion.div>
             </AnimatedSection>
           ))}
