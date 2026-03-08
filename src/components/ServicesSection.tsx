@@ -2,10 +2,10 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { Scissors, Sparkles, Crown, Droplets } from 'lucide-react';
 
 const services = [
-  { icon: Scissors, title: 'Classic Cut', price: '$45', desc: 'Precision haircut tailored to your style with hot towel finish.' },
-  { icon: Crown, title: 'Royal Shave', price: '$35', desc: 'Traditional straight razor shave with premium oils and balms.' },
-  { icon: Sparkles, title: 'Beard Sculpting', price: '$30', desc: 'Expert beard shaping, trimming and conditioning treatment.' },
-  { icon: Droplets, title: 'LUXE Package', price: '$95', desc: 'Full haircut, shave, facial massage and scalp treatment.' },
+  { icon: Scissors, title: 'Classic Cut', price: 'R45', desc: 'Precision haircut tailored to your style with hot towel finish.' },
+  { icon: Crown, title: 'Royal Shave', price: 'R35', desc: 'Traditional straight razor shave with premium oils and balms.' },
+  { icon: Sparkles, title: 'Beard Sculpting', price: 'R30', desc: 'Expert beard shaping, trimming and conditioning treatment.' },
+  { icon: Droplets, title: 'LUXE Package', price: 'R95', desc: 'Full haircut, shave, facial massage and scalp treatment.' },
 ];
 
 const ServicesSection = () => (

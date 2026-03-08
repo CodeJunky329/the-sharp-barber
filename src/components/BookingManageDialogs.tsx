@@ -34,10 +34,10 @@ const serviceLabels: Record<string, string> = {
 };
 
 const serviceOptions = [
-  { value: 'classic_cut', label: 'Classic Cut — $45' },
-  { value: 'royal_shave', label: 'Royal Shave — $35' },
-  { value: 'beard_sculpt', label: 'Beard Sculpting — $30' },
-  { value: 'luxe_package', label: 'LUXE Package — $95' },
+  { value: 'classic_cut', label: 'Classic Cut — R45' },
+  { value: 'royal_shave', label: 'Royal Shave — R35' },
+  { value: 'beard_sculpt', label: 'Beard Sculpting — R30' },
+  { value: 'luxe_package', label: 'LUXE Package — R95' },
 ];
 
 const timeSlots = [

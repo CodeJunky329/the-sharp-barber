@@ -29,10 +29,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NotificationBell from '@/components/NotificationBell';
 
 const serviceLabels: Record<string, string> = {
-  classic_cut: 'Classic Cut — $45',
-  royal_shave: 'Royal Shave — $35',
-  beard_sculpt: 'Beard Sculpting — $30',
-  luxe_package: 'LUXE Package — $95',
+  classic_cut: 'Classic Cut — R45',
+  royal_shave: 'Royal Shave — R35',
+  beard_sculpt: 'Beard Sculpting — R30',
+  luxe_package: 'LUXE Package — R95',
 };
 
 interface Booking {
