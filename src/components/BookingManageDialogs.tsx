@@ -50,7 +50,7 @@ const timeSlots = [
 // ─── View Dialog ───
 export const ViewBookingDialog = ({ booking, open, onOpenChange }: { booking: Booking; open: boolean; onOpenChange: (v: boolean) => void }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="sm:max-w-md">
+    <DialogContent className="max-w-[92vw] max-h-[85vh] overflow-y-auto sm:max-w-md">
       <DialogHeader>
         <DialogTitle className="font-serif">Booking Details</DialogTitle>
       </DialogHeader>
