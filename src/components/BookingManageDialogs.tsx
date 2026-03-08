@@ -50,7 +50,7 @@ const timeSlots = [
 // ─── View Dialog ───
 export const ViewBookingDialog = ({ booking, open, onOpenChange }: { booking: Booking; open: boolean; onOpenChange: (v: boolean) => void }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="sm:max-w-md">
+    <DialogContent className="max-w-[92vw] max-h-[85vh] overflow-y-auto sm:max-w-md">
       <DialogHeader>
         <DialogTitle className="font-serif">Booking Details</DialogTitle>
       </DialogHeader>
@@ -116,7 +116,7 @@ export const EditBookingDialog = ({ booking, open, onOpenChange, onSaved }: { bo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-w-[92vw] max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-serif">Edit Booking</DialogTitle>
           <DialogDescription>Update your appointment details below.</DialogDescription>
@@ -229,7 +229,7 @@ export const CancelBookingDialog = ({ booking, open, onOpenChange, onCancelled }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[92vw] max-h-[85vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" /> Cancel Booking
