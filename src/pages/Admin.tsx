@@ -113,7 +113,7 @@ const Admin = () => {
     setStats({
       totalBookings: data.length,
       todayBookings: data.filter(b => b.booking_date === today).length,
-      upcomingBookings: data.filter(b => b.booking_date >= today && b.status === 'confirmed').length,
+      upcomingBookings: data.filter(b => b.booking_date >= today && (b.status === 'confirmed' || b.status === 'pending')).length,
       completedBookings: data.filter(b => b.status === 'completed').length
     });
   };
