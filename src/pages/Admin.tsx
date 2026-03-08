@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { format, isToday, isTomorrow, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
+import NotificationBell from '@/components/NotificationBell';
 
 interface Booking {
   id: string;
