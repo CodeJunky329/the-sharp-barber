@@ -207,7 +207,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
 
   const clearAll = () => {
     setNotifications([]);
-    saveNotifications([], isAdmin);
+    saveNotifications([], user?.id, isAdmin);
   };
 
   const markAsRead = (id: string) => {
