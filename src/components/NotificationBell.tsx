@@ -213,7 +213,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const markAsRead = (id: string) => {
     setNotifications((prev) => {
       const updated = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
-      saveNotifications(updated, isAdmin);
+      saveNotifications(updated, user?.id, isAdmin);
       return updated;
     });
   };
