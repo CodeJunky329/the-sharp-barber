@@ -21,11 +21,13 @@ interface Notification {
   bookingId?: string;
 }
 
-const getStorageKey = (isAdmin: boolean) => isAdmin ? 'luxe_notifications_admin' : 'luxe_notifications_user';
+const getStorageKey = (userId: string, isAdmin: boolean) =>
+  isAdmin ? `luxe_notifications_admin_${userId}` : `luxe_notifications_user_${userId}`;
 
-const loadNotifications = (isAdmin: boolean): Notification[] => {
+const loadNotifications = (userId: string | undefined, isAdmin: boolean): Notification[] => {
+  if (!userId) return [];
   try {
-    const stored = localStorage.getItem(getStorageKey(isAdmin));
+    const stored = localStorage.getItem(getStorageKey(userId, isAdmin));
     if (!stored) return [];
     return JSON.parse(stored).map((n: any) => ({
       ...n,
@@ -36,8 +38,9 @@ const loadNotifications = (isAdmin: boolean): Notification[] => {
   }
 };
 
-const saveNotifications = (notifications: Notification[], isAdmin: boolean) => {
-  localStorage.setItem(getStorageKey(isAdmin), JSON.stringify(notifications.slice(0, 50)));
+const saveNotifications = (notifications: Notification[], userId: string | undefined, isAdmin: boolean) => {
+  if (!userId) return;
+  localStorage.setItem(getStorageKey(userId, isAdmin), JSON.stringify(notifications.slice(0, 50)));
 };
 
 const getIcon = (type: Notification['type']) => {
@@ -62,8 +65,13 @@ const formatService = (s: string) => SERVICE_LABELS[s] || s.replace(/_/g, ' ');
 
 const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(isAdmin));
+  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(user?.id, isAdmin));
   const [open, setOpen] = useState(false);
+
+  // Reload notifications when user changes
+  useEffect(() => {
+    setNotifications(loadNotifications(user?.id, isAdmin));
+  }, [user?.id, isAdmin]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -76,7 +84,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     };
     setNotifications((prev) => {
       const updated = [newNotif, ...prev].slice(0, 50);
-      saveNotifications(updated, isAdmin);
+      saveNotifications(updated, user?.id, isAdmin);
       return updated;
     });
 
@@ -85,7 +93,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
       icon: getIcon(notif.type),
       duration: 5000,
     });
-  }, [isAdmin]);
+  }, [isAdmin, user?.id]);
 
   useEffect(() => {
     if (!user) return;
@@ -192,20 +200,20 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const markAllRead = () => {
     setNotifications((prev) => {
       const updated = prev.map((n) => ({ ...n, read: true }));
-      saveNotifications(updated, isAdmin);
+      saveNotifications(updated, user?.id, isAdmin);
       return updated;
     });
   };
 
   const clearAll = () => {
     setNotifications([]);
-    saveNotifications([], isAdmin);
+    saveNotifications([], user?.id, isAdmin);
   };
 
   const markAsRead = (id: string) => {
     setNotifications((prev) => {
       const updated = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
-      saveNotifications(updated, isAdmin);
+      saveNotifications(updated, user?.id, isAdmin);
       return updated;
     });
   };
