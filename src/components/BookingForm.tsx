@@ -98,16 +98,17 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
     }
 
     setLoading(true);
-    const { error } = await supabase.from('bookings').insert({
+    const bookingDate = format(date, 'yyyy-MM-dd');
+    const { data: insertedData, error } = await supabase.from('bookings').insert({
       user_id: user.id,
       full_name: fullName.trim(),
       phone: phone.trim(),
-      booking_date: format(date, 'yyyy-MM-dd'),
+      booking_date: bookingDate,
       booking_time: time,
       service,
       notes: notes.trim() || null,
       status: 'pending',
-    });
+    }).select().single();
 
     setLoading(false);
 
@@ -116,6 +117,16 @@ const BookingForm = ({ suggestedTime }: BookingFormProps) => {
       console.error(error);
     } else {
       toast.success('Booking confirmed! See you soon.');
+      // Notify admins about the new booking
+      if (insertedData) {
+        notifyAdmins({
+          id: insertedData.id,
+          service,
+          booking_date: bookingDate,
+          booking_time: time,
+          full_name: fullName.trim(),
+        }, 'new_booking');
+      }
       navigate('/dashboard');
     }
   };
