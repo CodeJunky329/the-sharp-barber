@@ -84,7 +84,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     };
     setNotifications((prev) => {
       const updated = [newNotif, ...prev].slice(0, 50);
-      saveNotifications(updated, isAdmin);
+      saveNotifications(updated, user?.id, isAdmin);
       return updated;
     });
 
