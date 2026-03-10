@@ -93,7 +93,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
       icon: getIcon(notif.type),
       duration: 5000,
     });
-  }, [isAdmin]);
+  }, [isAdmin, user?.id]);
 
   useEffect(() => {
     if (!user) return;
