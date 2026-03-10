@@ -65,8 +65,13 @@ const formatService = (s: string) => SERVICE_LABELS[s] || s.replace(/_/g, ' ');
 
 const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(isAdmin));
+  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(user?.id, isAdmin));
   const [open, setOpen] = useState(false);
+
+  // Reload notifications when user changes
+  useEffect(() => {
+    setNotifications(loadNotifications(user?.id, isAdmin));
+  }, [user?.id, isAdmin]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
