@@ -21,11 +21,13 @@ interface Notification {
   bookingId?: string;
 }
 
-const getStorageKey = (isAdmin: boolean) => isAdmin ? 'luxe_notifications_admin' : 'luxe_notifications_user';
+const getStorageKey = (userId: string, isAdmin: boolean) =>
+  isAdmin ? `luxe_notifications_admin_${userId}` : `luxe_notifications_user_${userId}`;
 
-const loadNotifications = (isAdmin: boolean): Notification[] => {
+const loadNotifications = (userId: string | undefined, isAdmin: boolean): Notification[] => {
+  if (!userId) return [];
   try {
-    const stored = localStorage.getItem(getStorageKey(isAdmin));
+    const stored = localStorage.getItem(getStorageKey(userId, isAdmin));
     if (!stored) return [];
     return JSON.parse(stored).map((n: any) => ({
       ...n,
@@ -36,8 +38,9 @@ const loadNotifications = (isAdmin: boolean): Notification[] => {
   }
 };
 
-const saveNotifications = (notifications: Notification[], isAdmin: boolean) => {
-  localStorage.setItem(getStorageKey(isAdmin), JSON.stringify(notifications.slice(0, 50)));
+const saveNotifications = (notifications: Notification[], userId: string | undefined, isAdmin: boolean) => {
+  if (!userId) return;
+  localStorage.setItem(getStorageKey(userId, isAdmin), JSON.stringify(notifications.slice(0, 50)));
 };
 
 const getIcon = (type: Notification['type']) => {
