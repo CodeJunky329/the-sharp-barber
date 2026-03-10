@@ -3,13 +3,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bell, Check, CheckCheck, Trash2, CalendarCheck, XCircle, Clock, UserPlus } from 'lucide-react';
-import { toast } from 'sonner';
+import { Bell, Check, Trash2, CalendarCheck, XCircle, CheckCheck, Clock, UserPlus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Notification {
   id: string;
@@ -17,31 +16,9 @@ interface Notification {
   message: string;
   type: 'confirmed' | 'cancelled' | 'completed' | 'new_booking' | 'pending';
   read: boolean;
-  timestamp: Date;
-  bookingId?: string;
+  created_at: string;
+  booking_id?: string;
 }
-
-const getStorageKey = (userId: string, isAdmin: boolean) =>
-  isAdmin ? `luxe_notifications_admin_${userId}` : `luxe_notifications_user_${userId}`;
-
-const loadNotifications = (userId: string | undefined, isAdmin: boolean): Notification[] => {
-  if (!userId) return [];
-  try {
-    const stored = localStorage.getItem(getStorageKey(userId, isAdmin));
-    if (!stored) return [];
-    return JSON.parse(stored).map((n: any) => ({
-      ...n,
-      timestamp: new Date(n.timestamp),
-    }));
-  } catch {
-    return [];
-  }
-};
-
-const saveNotifications = (notifications: Notification[], userId: string | undefined, isAdmin: boolean) => {
-  if (!userId) return;
-  localStorage.setItem(getStorageKey(userId, isAdmin), JSON.stringify(notifications.slice(0, 50)));
-};
 
 const getIcon = (type: Notification['type']) => {
   switch (type) {
@@ -54,168 +31,86 @@ const getIcon = (type: Notification['type']) => {
   }
 };
 
-const SERVICE_LABELS: Record<string, string> = {
-  classic_cut: 'Classic Cut',
-  royal_shave: 'Royal Shave',
-  beard_sculpt: 'Beard Sculpting',
-  luxe_package: 'LUXE Package',
-};
-
-const formatService = (s: string) => SERVICE_LABELS[s] || s.replace(/_/g, ' ');
-
 const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(user?.id, isAdmin));
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
-
-  // Reload notifications when user changes
-  useEffect(() => {
-    setNotifications(loadNotifications(user?.id, isAdmin));
-  }, [user?.id, isAdmin]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const addNotification = useCallback((notif: Omit<Notification, 'id' | 'read' | 'timestamp'>) => {
-    const newNotif: Notification = {
-      ...notif,
-      id: crypto.randomUUID(),
-      read: false,
-      timestamp: new Date(),
-    };
-    setNotifications((prev) => {
-      const updated = [newNotif, ...prev].slice(0, 50);
-      saveNotifications(updated, user?.id, isAdmin);
-      return updated;
-    });
+  const fetchNotifications = useCallback(async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
 
-    toast(notif.title, {
-      description: notif.message,
-      icon: getIcon(notif.type),
-      duration: 5000,
-    });
-  }, [isAdmin, user?.id]);
+    if (!error && data) {
+      setNotifications(data);
+    }
+  }, [user]);
 
+  // Initial fetch
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+
+  // Real-time subscription for new notifications
   useEffect(() => {
     if (!user) return;
 
-    if (isAdmin) {
-      // Admin: listen for new bookings
-      const channel = supabase
-        .channel('admin-notifications')
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'bookings' },
-          (payload) => {
-            const b = payload.new as any;
-            addNotification({
-              type: 'new_booking',
-              title: `📋 New Booking from ${b.full_name}`,
-              message: `${b.full_name} requested a ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time}. Awaiting your confirmation.`,
-              bookingId: b.id,
-            });
-          }
-        )
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'bookings' },
-          (payload) => {
-            const b = payload.new as any;
-            const old = payload.old as any;
-            if (b.status !== old.status && b.status === 'cancelled') {
-              // Check if this was cancelled by admin or user
-              const cancelledByAdmin = (b.notes || '').includes('[Cancelled by admin]');
-              if (!cancelledByAdmin) {
-                // User cancelled their own booking — notify admin
-                addNotification({
-                  type: 'cancelled',
-                  title: `❌ ${b.full_name} Cancelled`,
-                  message: `${b.full_name} cancelled their ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}.`,
-                  bookingId: b.id,
-                });
-              }
-              // If admin cancelled, don't show notification to admin (they did it)
-            }
-          }
-        )
-        .subscribe();
+    const channel = supabase
+      .channel(`notifications-${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          const newNotif = payload.new as Notification;
+          setNotifications((prev) => [newNotif, ...prev].slice(0, 50));
+          toast(newNotif.title, {
+            description: newNotif.message,
+            icon: getIcon(newNotif.type),
+            duration: 5000,
+          });
+        }
+      )
+      .subscribe();
 
-      return () => { supabase.removeChannel(channel); };
-    } else {
-      // User: listen for changes to their own bookings
-      const channel = supabase
-        .channel('user-notifications')
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'bookings', filter: `user_id=eq.${user.id}` },
-          (payload) => {
-            const b = payload.new as any;
-            const old = payload.old as any;
-            if (b.status === old.status) return;
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
-            if (b.status === 'cancelled') {
-              const cancelledByAdmin = (b.notes || '').includes('[Cancelled by admin]');
-              if (cancelledByAdmin) {
-                addNotification({
-                  type: 'cancelled',
-                  title: 'Booking Cancelled by Admin',
-                  message: `Admin has cancelled your ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}.`,
-                  bookingId: b.id,
-                });
-              } else {
-                addNotification({
-                  type: 'cancelled',
-                  title: 'Booking Cancelled',
-                  message: `You have cancelled your ${formatService(b.service)} appointment on ${b.booking_date} at ${b.booking_time}.`,
-                  bookingId: b.id,
-                });
-              }
-              return;
-            }
+  const markAllRead = async () => {
+    if (!user) return;
+    const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id);
+    if (unreadIds.length === 0) return;
 
-            const statusMessages: Record<string, { title: string; message: string; type: Notification['type'] }> = {
-              confirmed: {
-                type: 'confirmed',
-                title: 'Booking Confirmed! ✅',
-                message: `Your ${formatService(b.service)} on ${b.booking_date} at ${b.booking_time} has been confirmed. See you there!`,
-              },
-              completed: {
-                type: 'completed',
-                title: 'Session Complete 🎉',
-                message: `Your ${formatService(b.service)} session has been marked as completed. Thanks for visiting!`,
-              },
-            };
+    await supabase
+      .from('notifications')
+      .update({ read: true })
+      .in('id', unreadIds);
 
-            const info = statusMessages[b.status];
-            if (info) {
-              addNotification({ ...info, bookingId: b.id });
-            }
-          }
-        )
-        .subscribe();
-
-      return () => { supabase.removeChannel(channel); };
-    }
-  }, [user, isAdmin, addNotification]);
-
-  const markAllRead = () => {
-    setNotifications((prev) => {
-      const updated = prev.map((n) => ({ ...n, read: true }));
-      saveNotifications(updated, user?.id, isAdmin);
-      return updated;
-    });
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  const clearAll = () => {
+  const clearAll = async () => {
+    if (!user) return;
+    await supabase
+      .from('notifications')
+      .delete()
+      .eq('user_id', user.id);
+
     setNotifications([]);
-    saveNotifications([], user?.id, isAdmin);
   };
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) => {
-      const updated = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
-      saveNotifications(updated, user?.id, isAdmin);
-      return updated;
-    });
+  const markAsRead = async (id: string) => {
+    await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', id);
+
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
   return (
@@ -281,7 +176,7 @@ const NotificationBell = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{notif.message}</p>
                     <p className="text-[10px] text-muted-foreground/60 mt-1">
-                      {formatDistanceToNow(notif.timestamp, { addSuffix: true })}
+                      {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true })}
                     </p>
                   </div>
                 </button>

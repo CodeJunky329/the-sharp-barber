@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { notifyUserStatusChange } from '@/lib/notifications';
 import AnimatedSection from '@/components/AnimatedSection';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -132,12 +133,14 @@ const Admin = () => {
 
   // Update booking status
   const updateStatus = async (id: string, newStatus: string) => {
+    const booking = bookings.find(b => b.id === id);
+    if (!booking) return;
+
     const updateData: any = { status: newStatus };
+    const cancelledByAdmin = newStatus === 'cancelled';
     
-    // Mark admin cancellations so notifications can distinguish who cancelled
-    if (newStatus === 'cancelled') {
-      const booking = bookings.find(b => b.id === id);
-      const existingNotes = booking?.notes || '';
+    if (cancelledByAdmin) {
+      const existingNotes = booking.notes || '';
       updateData.notes = existingNotes 
         ? `${existingNotes}\n\n[Cancelled by admin]` 
         : '[Cancelled by admin]';
@@ -150,7 +153,11 @@ const Admin = () => {
 
     if (error) {
       console.error('Error updating status:', error);
+      return;
     }
+
+    // Create notification for the booking owner
+    await notifyUserStatusChange(booking, newStatus, cancelledByAdmin);
   };
 
   // Real-time subscription

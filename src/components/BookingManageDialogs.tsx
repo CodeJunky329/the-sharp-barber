@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { notifyAdmins } from '@/lib/notifications';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -229,6 +230,14 @@ export const CancelBookingDialog = ({ booking, open, onOpenChange, onCancelled }
       toast.error('Failed to cancel booking.');
     } else {
       toast.success('Booking cancelled.');
+      // Notify admins about user cancellation
+      notifyAdmins({
+        id: booking.id,
+        service: booking.service,
+        booking_date: booking.booking_date,
+        booking_time: booking.booking_time,
+        full_name: booking.full_name,
+      }, 'user_cancelled');
       setReason('');
       onCancelled();
       onOpenChange(false);
