@@ -1,73 +1,128 @@
-# Welcome to your Lovable project
+# Luxe - Barbershop Website
 
-## Project info
+Welcome to **Luxe Barbershop**, an exquisite online platform for booking premium grooming services at our luxurious barbershop. Experience the pinnacle of men's grooming with our expert barbers, state-of-the-art facilities, and seamless online booking system.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## ✨ Features
 
-## How can I edit this code?
+- **Elegant Booking System**: Effortlessly schedule appointments with our skilled barbers
+- **Service Showcase**: Explore our comprehensive range of premium grooming services
+- **User Authentication**: Secure login and account management powered by Supabase
+- **Admin Dashboard**: Comprehensive management tools for barbershop operations
+- **Responsive Design**: Sleek, mobile-friendly interface built with modern web technologies
+- **Real-time Notifications**: Stay updated with appointment confirmations and reminders
+- **Portfolio Gallery**: Showcase our work and barber expertise
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with custom components
+- **UI Components**: Radix UI primitives
+- **Backend**: Supabase (Authentication, Database, Real-time)
+- **Icons**: Lucide React
+- **Testing**: Vitest
+- **Package Manager**: Npm
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (version 18 or higher)
+- Npm package manager
+- Supabase account
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone the repository**
 
-Follow these steps:
+   ```bash
+   git clone (url)
+   cd into-folder
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **Install dependencies**
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+   ```bash
+   npm install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. **Environment Setup**
+   Create a `.env.local` file in the root directory and add your Supabase credentials:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Start the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to `http://localhost:(whichever portnumber you use)` to view the application.
+
+## 📖 Usage
+
+### For Customers
+
+- Browse our services and pricing
+- Create an account or sign in
+- Book appointments with preferred barbers
+- Manage your bookings and receive notifications
+
+### For Admins
+
+- Access the admin dashboard
+- Manage appointments and customer data
+- Update services and pricing
+- View analytics and reports
+
+## 🏗️ Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components (buttons, forms, etc.)
+│   └── ...             # Feature-specific components
+├── contexts/           # React contexts (Auth, etc.)
+├── hooks/              # Custom React hooks
+├── lib/                # Utilities and configurations
+├── pages/              # Page components
+└── assets/             # Static assets
 ```
 
-**Edit a file directly in GitHub**
+## 🧪 Testing
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Run the test suite with:
 
-**Use GitHub Codespaces**
+```bash
+npm run test
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📦 Build for Production
 
-## What technologies are used for this project?
+```bash
+npm run build
+```
 
-This project is built with:
+The built files will be in the `dist/` directory, ready for deployment.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Deployment
 
-## How can I deploy this project?
+This project is configured for deployment on Vercel and Netlify. The `vercel.json` file contains the necessary configuration.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+## 📄 License
 
-Yes, you can!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📞 Contact
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- **Website**: [LUXE](https://luxebarber.netlify.app)
+- **Email**: suhairsmith17@gmail.com
+
+---
+
+_Experience luxury grooming at its finest. Book your appointment today!_ 💈✨
