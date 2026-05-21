@@ -74,7 +74,7 @@ const HeroSection = () => (
         </Link>
         <Link to="/work">
           <Button variant="outline" size="lg" className="border-primary/30 text-primary hover:bg-primary/10 text-sm uppercase tracking-wider px-8">
-            View Our Work
+            View Gallery
           </Button>
         </Link>
       </motion.div>
