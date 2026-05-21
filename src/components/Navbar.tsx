@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
-  { label: 'Work', path: '/work' },
+  { label: 'Gallery', path: '/work' },
   { label: 'Book Now', path: '/booking' },
 ];
 
